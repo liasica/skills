@@ -1,6 +1,6 @@
 # Golang 规范整理
 
-基于 `/Users/liasica/Golang规范.html` 整理，并作为后续 Go 任务的主版本维护。
+基于 `~/Golang规范.html` 整理，并作为后续 Go 任务的主版本维护。
 
 后续在任何 Go 项目中，默认按本文件执行。
 
@@ -530,8 +530,8 @@ fmt.Fprintf(&b, "SnapshotAt: %s (unix=%d)\n", ts, snapshotAt)
 
 以后如果你要更新这套规范，按下面的方法处理：
 
-1. 先更新本文件 `/Users/liasica/Golang规范.md`，它是规范的主版本。
-2. 如果 Go 规范的触发条件、优先级或入口发生变化，再同步更新全局记忆文件 `/Users/liasica/AGENTS.md`。
-3. `/Users/liasica/.codex/AGENTS.md` 和 `/Users/liasica/.claude/CLAUDE.md` 应保持指向 `/Users/liasica/AGENTS.md` 的软链，不单独维护内容。
-4. 如果精简规则、触发条件或执行方式发生变化，再同步更新 skill 文件 `/Users/liasica/.codex/skills/liasica-go-style/SKILL.md`。
+1. 先更新本文件 `~/Golang规范.md`，它是规范的主版本。
+2. 如果 Go 规范的触发条件、优先级或入口发生变化，再同步更新全局记忆文件 `~/AGENTS.md`。
+3. `~/.codex/AGENTS.md` 和 `~/.claude/CLAUDE.md` 应保持指向 `~/AGENTS.md` 的软链，不单独维护内容。
+4. 如果精简规则、触发条件或执行方式发生变化，再同步更新 skill 文件 `~/.codex/skills/go-style/SKILL.md`。
 5. 开一个新会话，或者让我明确执行一次“同步 Go 规范记忆”，确保后续任务按最新版生效。
