@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# 中英文标点与 ASCII 符号检查器，只报不改
-# 中文句用全角标点，注释块结尾不加句末标点，箭头等符号用 ASCII
+# 中英文标点检查器，只报不改
+# 中文句用全角标点，注释块结尾不加句末标点
 # 反引号、「」、[Foo]、URL、TODO:、端口号、CSS 属性名不参与检查
 # 单行加 punct-ignore 可豁免
 import io
@@ -167,7 +167,6 @@ def word_left(s, i):
 def normalize(body):
     # 返回符合规范的写法，与原文不同即为违规
     s, keep = protect(body)
-    s = s.replace(u'→', '->').replace(u'×', 'x').replace(u'─', '-').replace(u'•', '-')
     s = fix_parens(s)
     for half, full in ((u',', u'，'), (u';', u'；'), (u':', u'：')):
         tail = u'(?![0-9])' if half == u':' else u''

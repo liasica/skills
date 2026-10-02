@@ -49,7 +49,7 @@ Markdown + frontmatter，各 harness 通用。
 
 ## check-punct
 
-检查中英文标点混用、注释块尾句末标点、`→` `×` 这类非 ASCII 符号，以及工作流里的中文 `name:`。只报不改。
+检查中英文标点混用、注释块尾句末标点，以及工作流里的中文 `name:`。目录树、数学表达、单位、箭头和状态标记可使用规范符号。只报不改。
 
 Claude Code 装了 plugin 后由 PostToolUse hook 自动跑，写文件后立即反馈。其他场景手动调：
 
