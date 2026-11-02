@@ -1,6 +1,6 @@
 ---
 name: go-style
-description: 写、改、重构或审查 Go 代码时使用。命名、空行分块、err 不重复声明、JSON key 不用中文、命名返回值、入参换行、Fprintf 返回值处理等硬性规则，以及提交前的 gclint 检查。
+description: 写、改、重构或审查 Go 代码时使用。命名、空行分块、err 不重复声明、JSON key 不用中文、命名返回值、入参换行、Fprintf 返回值处理等硬性规则，以及提交前的 lint 检查。
 ---
 
 # Go 规范
@@ -31,7 +31,7 @@ description: 写、改、重构或审查 Go 代码时使用。命名、空行分
 项目内有 `.golangci.yml` 时必须无 issue：
 
 ```bash
-/usr/local/bin/gclint run --config .golangci.yml --new-from-rev=HEAD~1 --timeout=10m
+golangci-lint run --config .golangci.yml --new-from-rev=HEAD~1 --timeout=10m
 ```
 
-gclint 的规则比本文更严且会直接报错，与本文冲突时以 gclint 为准。
+本机有 `gclint`（带自定义规则的 golangci-lint 构建）时用它代替 `golangci-lint`。lint 的规则比本文更严且会直接报错，与本文冲突时以 lint 为准。
