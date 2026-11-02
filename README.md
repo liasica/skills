@@ -11,7 +11,7 @@
 /plugin install liasica-skills@liasica-skills
 ```
 
-装到 `~/.claude/plugins/cache/` 标准位置，skills 与 hook 一并生效，不改动 `settings.json`。更新用 `/plugin update`。
+装到 `~/.claude/plugins/cache/` 标准位置，skills 与 hook 一并生效，不改动 `settings.json`。更新用 `/plugin update`，按提交跟踪。hook 与检查器依赖 `python3`。
 
 ### Gemini CLI
 
@@ -19,9 +19,11 @@
 gemini extensions install https://github.com/liasica/skills
 ```
 
+extension 提供 skills 与上下文，不带 hook，检查器手动运行：`python3 hooks/check-punct.py <file>`。
+
 ### Codex 与其他
 
-没有 plugin 机制的 harness 用兜底脚本，把 skills 软链进它的 `skills/` 目录：
+没有 plugin 机制的 harness 用兜底脚本，把 skills 软链进它的 skills 目录（Codex 为 `~/.agents/skills`）：
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/liasica/skills/master/install.sh | bash
@@ -65,17 +67,17 @@ check-punct path/to/file.go
 find . -name '*.dart' -exec check-punct {} \;
 ```
 
-覆盖 `.go` `.dart` `.ts` `.tsx` `.js` `.css` 的注释，以及 `.yaml` `.sh` `.sql` `.py` 的 `#` 与 `--` 注释。反引号内、`「」` 内、`[Foo]` doc 引用、URL、`TODO:`、`//go:embed`、端口号、CSS 属性名、函数调用括号都不参与检查。误报时在该行加 `punct-ignore` 豁免。
+覆盖 `.go` `.dart` `.ts` `.tsx` `.js` `.jsx` `.css` `.java` `.kt` `.swift` `.rs` `.c` `.h` `.cpp` 的注释，以及 `.yaml` `.yml` `.sh` `.bash` `.zsh` `.py` `.toml` 的 `#` 注释和 `.sql` 的 `#` 与 `--` 注释，均含行尾注释。反引号内、`「」` 内、`[Foo]` doc 引用、URL、`TODO:`、`//go:embed`、端口号、CSS 属性名、函数调用括号都不参与检查。误报时在该行加 `punct-ignore` 豁免。
 
 无违规时静默退出 0；有违规时输出带 `decision` 与 `reason` 的 JSON，便于接进别的 hook 体系。
 
 ## 自动生效
 
-plugin 带一个 SessionStart hook，在会话启动、`/clear`、compact 之后注入一句硬要求：命中 skill 的场景必须先加载再动手，不许凭记忆作答。
+Claude Code plugin 带一个 SessionStart hook，在会话启动、`/clear`、compact 之后注入一句硬要求：命中 skill 的场景必须先加载再动手，不许凭记忆作答。
 
 注入内容只有一句约 160 字符，因为 skill 名与 description 本来就常驻在 skill 列表里，重复注入是浪费；缺的只是「必须加载」这条约束。
 
-它把「得想起来有这个 skill」变成「开头就摆在面前」，是概率提升而非强制。真正的强制是检查器：标点靠 `check-punct` 在 PostToolUse 拦截，Go 靠 `gclint` 在提交前把关。
+它把「得想起来有这个 skill」变成「开头就摆在面前」，是概率提升而非强制。真正的强制是检查器：标点靠 `check-punct` 在 PostToolUse 拦截，Go 靠 lint 在提交前把关。
 
 ## 设计取舍
 
