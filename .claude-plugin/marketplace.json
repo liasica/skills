@@ -4,8 +4,7 @@
     "name": "liasica"
   },
   "metadata": {
-    "description": "通用开发规范 skill 与标点检查器",
-    "version": "1.3.0"
+    "description": "通用开发规范 skill 与标点检查器"
   },
   "plugins": [
     {

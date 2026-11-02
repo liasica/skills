@@ -1,12 +1,12 @@
 {
   "name": "liasica-skills",
   "description": "通用开发规范：项目初始化、提交信息、GitHub Actions、Go 规范、superpowers 产出存放、全局记忆合并，外加中英文标点检查器",
-  "version": "1.3.0",
   "author": {
     "name": "liasica"
   },
   "homepage": "https://github.com/liasica/skills",
   "repository": "https://github.com/liasica/skills",
   "license": "MIT",
-  "keywords": ["skills", "conventions", "punctuation", "commit", "github-actions"]
+  "keywords": ["skills", "conventions", "punctuation", "commit", "github-actions"],
+  "hooks": "./hooks/claude-hooks.json"
 }

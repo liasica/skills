@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_response.filePath // .tool_input.file_path // empty' | { read -r f; [ -n \"$f\" ] && python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/check-punct.py\" \"$f\"; } 2>/dev/null; true",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/check-punct.py\"",
             "timeout": 15,
             "statusMessage": "检查标点规范"
           }
