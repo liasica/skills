@@ -27,15 +27,24 @@ else
   echo "clone $REPO_DIR"
 fi
 
-# harness 的 skills 目录，父目录存在才装；追加目标用 SKILL_TARGETS 指定，空格分隔
-TARGETS=("$HOME/.codex/skills")
+# harness 的 skills 目录：装了 Codex 就用 ~/.agents/skills；追加目标用 SKILL_TARGETS 指定，空格分隔
+CODEX_DIR="${CODEX_HOME:-$HOME/.codex}"
+TARGETS=()
+[ ! -d "$CODEX_DIR" ] || TARGETS+=("$HOME/.agents/skills")
 if [ -n "${SKILL_TARGETS:-}" ]; then
   for extra in $SKILL_TARGETS; do TARGETS+=("$extra"); done
 fi
 
+# 清掉 Codex 弃用目录里指向本仓库的软链
+for link in "$CODEX_DIR"/skills/*; do
+  [ -L "$link" ] || continue
+  case "$(readlink "$link")" in
+    "$REPO"/skills/*) rm "$link"; echo "clean $link" ;;
+  esac
+done
+
 installed=0
-for target in "${TARGETS[@]}"; do
-  [ -d "$(dirname "$target")" ] || continue
+for target in ${TARGETS[@]+"${TARGETS[@]}"}; do
   mkdir -p "$target"
   for dir in "$REPO"/skills/*/; do
     name="$(basename "$dir")"
