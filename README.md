@@ -46,6 +46,13 @@ Markdown + frontmatter，各 harness 通用。
 | `github-actions` | 创建或修改工作流 |
 | `superpowers-output` | 使用 superpowers 能力 |
 | `go-style` | 写、改、重构或审查 Go 代码 |
+| `merge-global-memory` | 用户要求把 liasica 的全局记忆合并到自己的全局记忆 |
+
+## 合并全局记忆
+
+`skills/merge-global-memory/global-memory.md` 收录一份通用的全局记忆：优先级、语言表达、工作方式、通用约定、标点符号与语言专项规则。
+
+装好后对 agent 说「把 liasica 的全局记忆合并到我的全局记忆」，Claude Code 也可以直接运行 `/liasica-skills:merge-global-memory`。agent 会定位当前 harness 的全局记忆文件，逐条比对后列出新增与冲突，经你确认并备份后写入。可重复执行，已有的规则会跳过。
 
 ## check-punct
 

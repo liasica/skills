@@ -9,5 +9,6 @@
 | `github-actions` | 创建或修改工作流 |
 | `superpowers-output` | 使用 superpowers 能力 |
 | `go-style` | 写、改、重构或审查 Go 代码 |
+| `merge-global-memory` | 用户要求把 liasica 的全局记忆合并到自己的全局记忆 |
 
-`hooks/check-punct.py <file>` 检查代码注释里的中英文标点混用与非 ASCII 符号，只报不改。
+`hooks/check-punct.py <file>` 检查代码注释里的中英文标点混用与句末标点，只报不改。

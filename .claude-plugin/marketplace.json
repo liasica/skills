@@ -5,13 +5,13 @@
   },
   "metadata": {
     "description": "通用开发规范 skill 与标点检查器",
-    "version": "1.2.0"
+    "version": "1.3.0"
   },
   "plugins": [
     {
       "name": "liasica-skills",
       "source": "./",
-      "description": "项目初始化、提交信息、GitHub Actions、Go 规范、superpowers 产出存放五个 skill，外加写文件后自动跑的中英文标点与 ASCII 符号检查器",
+      "description": "项目初始化、提交信息、GitHub Actions、Go 规范、superpowers 产出存放、全局记忆合并六个 skill，外加写文件后自动跑的中英文标点检查器",
       "category": "conventions",
       "tags": ["conventions", "punctuation", "commit", "github-actions", "chinese"]
     }
