@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # 中英文标点检查器，只报不改
 # 中文句用全角标点，注释块结尾不加句末标点
-# 反引号、「」、[Foo]、URL、TODO:、端口号、CSS 属性名不参与检查
+# 反引号、「」、[Foo]、URL、`TODO:`、端口号、CSS 属性名不参与检查
 # 单行加 punct-ignore 可豁免
 import io
 import os
@@ -218,8 +218,28 @@ def merge_blocks(text, spans):
     return blocks
 
 
-def hash_blocks(lines):
-    idx = [i for i, l in enumerate(lines) if re.match(r'^\s*(#|--)', l)]
+def trailing_comment(line, markers):
+    # 行尾注释：引号外且前面有空白的注释符，独占一行的注释归 `hash_blocks`
+    if line.lstrip().startswith(markers):
+        return None
+    q, i = '', 0
+    while i < len(line):
+        ch = line[i]
+        if q:
+            if ch == '\\':
+                i += 1
+            elif ch == q:
+                q = ''
+        elif ch in '\'"':
+            q = ch
+        elif i > 0 and line[i - 1] in ' \t' and line.startswith(markers, i):
+            return line[i:]
+        i += 1
+    return None
+
+
+def hash_blocks(lines, markers):
+    idx = [i for i, l in enumerate(lines) if l.lstrip().startswith(markers)]
     blocks, cur = [], []
     for i in idx:
         if cur and i == cur[-1] + 1:
@@ -234,7 +254,7 @@ def hash_blocks(lines):
 
 
 def scan_bodies(groups):
-    # groups: [[(行号, 正文)]]，逐块检查，块尾另查句末标点
+    # `groups` 形如 `[[(行号, 正文)]]`，逐块检查，块尾另查句末标点
     hits = []
     for grp in groups:
         for k, (lineno, body) in enumerate(grp):
@@ -274,15 +294,35 @@ def check(path):
             groups.append([(start + k, MARK.match(l).group(4)) for k, l in enumerate(seg.split('\n'))])
         hits += scan_bodies(groups)
     elif ext in H_EXT:
-        groups = [[(i + 1, MARK.match(lines[i]).group(4)) for i in blk] for blk in hash_blocks(lines)]
+        markers = ('#', '--') if ext == '.sql' else ('#',)
+        groups = [[(i + 1, MARK.match(lines[i]).group(4)) for i in blk] for blk in hash_blocks(lines, markers)]
+        for i, l in enumerate(lines):
+            tail = trailing_comment(l, markers)
+            if tail:
+                groups.append([(i + 1, MARK.match(tail).group(4))])
         hits += scan_bodies(groups)
-    return hits
+    return sorted(hits, key=lambda h: h[0])
+
+
+def target_path():
+    # 有参数取参数，否则按 hook 协议从 stdin 读
+    if len(sys.argv) > 1:
+        return sys.argv[1]
+    if sys.stdin.isatty():
+        return ''
+    try:
+        data = json.load(sys.stdin)
+    except ValueError:
+        return ''
+    for key, field in (('tool_response', 'filePath'), ('tool_input', 'file_path')):
+        part = data.get(key)
+        if isinstance(part, dict) and part.get(field):
+            return part[field]
+    return ''
 
 
 def main():
-    if len(sys.argv) < 2:
-        return 0
-    path = sys.argv[1]
+    path = target_path()
     if not path or not os.path.isfile(path):
         return 0
     hits = check(path)
