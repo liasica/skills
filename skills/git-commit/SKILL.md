@@ -25,7 +25,7 @@ type 取 `feat` `fix` `refactor` `perf` `docs` `style` `test` `build` `ci` `chor
 
 ## 身份与分支
 
-- 作者与 committer 均为 `liasica <magicrolan@qq.com>`
+- 作者与 committer 均使用全局记忆或 `git config` 中配置的身份
 - 默认分支 `master`
-- 未经明确指令不执行 `git commit` 与 `git push`
+- 全局记忆未授予长期授权时，未经明确指令不执行 `git commit` 与 `git push`
 - 一次联动需求跨多仓时各仓库独立提交，不把多仓改动混进同一个提交
