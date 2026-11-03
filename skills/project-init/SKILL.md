@@ -21,6 +21,12 @@ git init -b master
 ln -s AGENTS.md CLAUDE.md
 ```
 
+Windows 上在 PowerShell 里执行，需要开发者模式与 `core.symlinks=true`：
+
+```powershell
+cmd /c mklink CLAUDE.md AGENTS.md
+```
+
 `AGENTS.md` 只写从代码和 git 历史里读不出来的内容：项目目标、应用划分、技术栈与版本、关键约束与安全边界、开发约定。能从代码直接读出的目录结构不要抄进去。
 
 ## .gitignore

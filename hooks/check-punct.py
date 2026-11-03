@@ -15,7 +15,7 @@ CJK_RE = re.compile(u'[%s]' % CJK)
 NEAR = u'[%s，。、；：？！「」『』（）《》——…％\x00]' % CJK
 
 C_EXT = ('.go', '.dart', '.ts', '.tsx', '.js', '.jsx', '.css', '.java', '.kt', '.swift', '.rs', '.c', '.h', '.cpp')
-H_EXT = ('.yaml', '.yml', '.sh', '.bash', '.zsh', '.sql', '.py', '.toml')
+H_EXT = ('.yaml', '.yml', '.sh', '.bash', '.zsh', '.sql', '.py', '.toml', '.ps1')
 SKIP_PART = ('/node_modules/', '/build/', '/dist/', '/.dart_tool/', '/vendor/',
              '/ent/', '/.git/', '/SourcePackages/', '/Pods/', '/.superpowers/')
 SKIP_NAME = ('.g.dart', '.freezed.dart', '.pb.go', '_generated.go', 'schema.d.ts')
@@ -275,7 +275,7 @@ def check(path):
     if any(p in norm for p in SKIP_PART) or any(norm.endswith(s) for s in SKIP_NAME):
         return []
     try:
-        text = io.open(path, encoding='utf-8').read()
+        text = io.open(path, encoding='utf-8-sig').read()
     except Exception:
         return []
     lines = text.split('\n')
@@ -311,7 +311,8 @@ def target_path():
     if sys.stdin.isatty():
         return ''
     try:
-        data = json.load(sys.stdin)
+        # 按字节读取，Windows 的默认编码不是 UTF-8
+        data = json.load(sys.stdin.buffer)
     except ValueError:
         return ''
     for key, field in (('tool_response', 'filePath'), ('tool_input', 'file_path')):
@@ -337,6 +338,7 @@ def main():
     if len(hits) > 20:
         msg.append(u'  ……另有 %d 处' % (len(hits) - 20))
     msg.append(u'请修正后继续；确属引述字面量或代码片段的，在该行加 punct-ignore 豁免。')
+    sys.stdout.reconfigure(encoding='utf-8')
     print(json.dumps({'decision': 'block', 'reason': '\n'.join(msg)}, ensure_ascii=False))
     return 0
 

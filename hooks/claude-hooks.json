@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/check-punct.py\"",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/check-punct.sh\"",
             "timeout": 15,
             "statusMessage": "检查标点规范"
           }

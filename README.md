@@ -11,7 +11,7 @@
 /plugin install liasica-skills@liasica-skills
 ```
 
-装到 `~/.claude/plugins/cache/` 标准位置，skills 与 hook 一并生效，不改动 `settings.json`。更新用 `/plugin update`，按提交跟踪。hook 与检查器依赖 `python3`。
+装到 `~/.claude/plugins/cache/` 标准位置，skills 与 hook 一并生效，不改动 `settings.json`。更新用 `/plugin update`，按提交跟踪。检查器依赖 Python 3。
 
 ### Gemini CLI
 
@@ -20,6 +20,8 @@ gemini extensions install https://github.com/liasica/skills
 ```
 
 extension 提供 skills 与上下文，不带 hook，检查器手动运行：`python3 hooks/check-punct.py <file>`。
+
+同时运行了兜底脚本时，Gemini CLI 也会读取 `~/.agents/skills`，并提示 `Skill conflict detected`。两边内容相同，可以忽略。
 
 ### Codex 与其他
 
@@ -36,6 +38,55 @@ SKILL_TARGETS="$HOME/.foo/skills" curl -fsSL https://raw.githubusercontent.com/l
 ```
 
 脚本只建软链，不修改任何 harness 的配置文件。
+
+### Windows
+
+先安装 Git for Windows 和 Python 3。plugin 的 hook 经 Git Bash 运行，没有 Git for Windows 时不生效：
+
+```powershell
+winget install --id Git.Git -e
+winget install --id Python.Python.3.14 -e
+```
+
+Claude Code 与 Gemini CLI 的安装命令同上。Codex 等没有 plugin 机制的 harness 在 PowerShell 里运行：
+
+```powershell
+irm https://raw.githubusercontent.com/liasica/skills/master/install.ps1 | iex
+```
+
+同一条命令负责安装和更新。脚本用 junction 接入 skills，不需要管理员权限或开发者模式，并把 `hooks` 目录写进用户 PATH，提供 `check-punct` 命令。默认克隆到 `%LOCALAPPDATA%\liasica-skills`，用 `SKILLS_DIR` 改；探测不到的 harness 用 `SKILL_TARGETS` 指定，多个路径用分号分隔。
+
+| harness | 全局记忆 | skills |
+| --- | --- | --- |
+| Claude Code | `%USERPROFILE%\.claude\CLAUDE.md` | plugin |
+| Codex | `%USERPROFILE%\.codex\AGENTS.md`，用 `CODEX_HOME` 改目录 | `%USERPROFILE%\.agents\skills` |
+| Gemini CLI | `%USERPROFILE%\.gemini\GEMINI.md` | extension |
+
+Claude Code 找不到 Git Bash 时，在 `%USERPROFILE%\.claude\settings.json` 里指定路径：
+
+```json
+{
+  "env": {
+    "CLAUDE_CODE_GIT_BASH_PATH": "C:\\Program Files\\Git\\bin\\bash.exe"
+  }
+}
+```
+
+按 `project-init` 建立的仓库里，`CLAUDE.md` 是指向 `AGENTS.md` 的软链。Git 未启用软链时，它会检出成内容只有 `AGENTS.md` 一行的普通文件，Claude Code 读不到项目记忆。在系统设置里打开开发者模式，再执行：
+
+```powershell
+git config --global core.symlinks true
+```
+
+已经克隆的仓库在根目录修复一次：
+
+```powershell
+git config core.symlinks true
+Remove-Item CLAUDE.md
+git checkout -- CLAUDE.md
+```
+
+在 WSL 里运行的 harness 按 Linux 处理，用 `install.sh` 与 `link-claude-md.sh`。WSL 的主目录与 Windows 相互独立。
 
 ## skills
 
@@ -79,7 +130,20 @@ curl -fsSL https://raw.githubusercontent.com/liasica/skills/master/link-claude-m
 
 可重复执行。运行后在 Claude Code 里用 `/memory` 查看加载结果。
 
+Windows 在 PowerShell 里运行。这个版本不建软链，`CLAUDE.md` 不存在或内容相同时都写成一行 `@` 导入：
+
+```powershell
+irm https://raw.githubusercontent.com/liasica/skills/master/link-claude-md.ps1 | iex
+```
+
+其他位置作为参数传入：
+
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/liasica/skills/master/link-claude-md.ps1))) C:\path\AGENTS.md
+```
+
 - 导入后两份文件同时加载，互相矛盾的规则需要手动处理
+- 主目录以外的路径部分含空白字符时无法写成导入，脚本报错退出，不改动文件
 - 正本放在主目录（`~/AGENTS.md`）时，在没有 `CLAUDE.md` 的仓库里会加载两次
 - 桌面端的 Cowork 会话不加载工作目录外的导入，也不加载软链的 `~/.claude/CLAUDE.md`
 
@@ -94,7 +158,9 @@ check-punct path/to/file.go
 find . -name '*.dart' -exec check-punct {} \;
 ```
 
-覆盖 `.go` `.dart` `.ts` `.tsx` `.js` `.jsx` `.css` `.java` `.kt` `.swift` `.rs` `.c` `.h` `.cpp` 的注释，以及 `.yaml` `.yml` `.sh` `.bash` `.zsh` `.py` `.toml` 的 `#` 注释和 `.sql` 的 `#` 与 `--` 注释，均含行尾注释。反引号内、`「」` 内、`[Foo]` doc 引用、URL、`TODO:`、`//go:embed`、端口号、CSS 属性名、函数调用括号都不参与检查。误报时在该行加 `punct-ignore` 豁免。
+Windows 上由 `install.ps1` 提供，在 PowerShell 或 cmd 里调用 `check-punct path\to\file.go`。
+
+覆盖 `.go` `.dart` `.ts` `.tsx` `.js` `.jsx` `.css` `.java` `.kt` `.swift` `.rs` `.c` `.h` `.cpp` 的注释，以及 `.yaml` `.yml` `.sh` `.bash` `.zsh` `.py` `.toml` `.ps1` 的 `#` 注释和 `.sql` 的 `#` 与 `--` 注释，均含行尾注释。反引号内、`「」` 内、`[Foo]` doc 引用、URL、`TODO:`、`//go:embed`、端口号、CSS 属性名、函数调用括号都不参与检查。误报时在该行加 `punct-ignore` 豁免。
 
 无违规时静默退出 0；有违规时输出带 `decision` 与 `reason` 的 JSON，便于接进别的 hook 体系。
 

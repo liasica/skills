@@ -19,6 +19,7 @@ description: 用户明确要求把 liasica 的全局记忆或通用规则合并�
 - 用 `ls -la` 检查上表每个文件。软链写入 `realpath` 指向的真实文件，保留软链本身；多个路径指向同一真实文件时只合并一次
 - 其他 harness 的文件内容独立时，询问是否一并合并
 - 目标文件不存在时，经用户同意后新建
+- Windows 上 `~` 指 `%USERPROFILE%`；没有 Bash 时用 PowerShell 的等价命令，写入时用不带 BOM 的 UTF-8
 
 ## 2. 逐条分类
 
