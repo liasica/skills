@@ -1,6 +1,6 @@
 ---
 name: project-init
-description: 初始化新项目或新建 git 仓库时使用。建立 AGENTS.md 正本与 CLAUDE.md 软链、master 默认分支、自包含 .gitignore。
+description: 初始化新项目或新建 git 仓库时使用。建立 AGENTS.md 正本与 CLAUDE.md 导入、master 默认分支、自包含 .gitignore。
 ---
 
 # 项目初始化
@@ -15,16 +15,16 @@ git init -b master
 
 ## 项目记忆
 
-`AGENTS.md` 是正本，`CLAUDE.md` 用**相对路径**软链到它（保证 clone 后仍有效），只维护正本，两者都纳入版本控制：
+`AGENTS.md` 是正本，`CLAUDE.md` 只有一行 `@AGENTS.md` 导入，只维护正本，两者都纳入版本控制：
 
 ```bash
-ln -s AGENTS.md CLAUDE.md
+echo '@AGENTS.md' > CLAUDE.md
 ```
 
-Windows 上在 PowerShell 里执行，需要开发者模式与 `core.symlinks=true`：
+Windows 上在 PowerShell 里执行（PowerShell 5.1 的 `>` 会写成 UTF-16）：
 
 ```powershell
-cmd /c mklink CLAUDE.md AGENTS.md
+[IO.File]::WriteAllText("$PWD\CLAUDE.md", "@AGENTS.md`n")
 ```
 
 `AGENTS.md` 只写从代码和 git 历史里读不出来的内容：项目目标、应用划分、技术栈与版本、关键约束与安全边界、开发约定。能从代码直接读出的目录结构不要抄进去。

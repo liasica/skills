@@ -6,7 +6,7 @@
 
 1. 当前会话中的用户明确指令
 2. 思考过程与对话一律使用中文
-3. 项目记忆：项目根目录的 `AGENTS.md`（`CLAUDE.md` 软链于它、纳入版本控制，见 `project-init` skill）；当前目录不是仓库根目录时向上查找
+3. 项目记忆：项目根目录的 `AGENTS.md`（`CLAUDE.md` 用 `@AGENTS.md` 导入它、纳入版本控制，见 `project-init` skill）；当前目录不是仓库根目录时向上查找
 4. 语言或专项规范，例如 `go-style` skill
 
 ## 语言表达规范

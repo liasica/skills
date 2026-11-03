@@ -72,20 +72,6 @@ Claude Code 找不到 Git Bash 时，在 `%USERPROFILE%\.claude\settings.json` �
 }
 ```
 
-按 `project-init` 建立的仓库里，`CLAUDE.md` 是指向 `AGENTS.md` 的软链。Git 未启用软链时，它会检出成内容只有 `AGENTS.md` 一行的普通文件，Claude Code 读不到项目记忆。在系统设置里打开开发者模式，再执行：
-
-```powershell
-git config --global core.symlinks true
-```
-
-已经克隆的仓库在根目录修复一次：
-
-```powershell
-git config core.symlinks true
-Remove-Item CLAUDE.md
-git checkout -- CLAUDE.md
-```
-
 在 WSL 里运行的 harness 按 Linux 处理，用 `install.sh` 与 `link-claude-md.sh`。WSL 的主目录与 Windows 相互独立。
 
 ## skills
