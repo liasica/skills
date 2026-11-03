@@ -56,6 +56,33 @@ Markdown + frontmatter，各 harness 通用。
 
 装好后对 agent 说「把 liasica 的全局记忆合并到我的全局记忆」，Claude Code 也可以直接运行 `/liasica-skills:merge-global-memory`。agent 会定位当前 harness 的全局记忆文件，逐条比对后列出新增与冲突，经你确认并备份后写入。可重复执行，已有的规则会跳过。
 
+## 接入已有的 AGENTS.md
+
+本机已有全局 `AGENTS.md` 时，用 `link-claude-md.sh` 让 Claude Code 也读取它：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/liasica/skills/master/link-claude-md.sh | bash
+```
+
+默认读取 `${CODEX_HOME:-~/.codex}/AGENTS.md`，其他位置作为参数传入：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/liasica/skills/master/link-claude-md.sh | bash -s -- /path/to/AGENTS.md
+```
+
+| `~/.claude/CLAUDE.md` 现状 | 处理 |
+| --- | --- |
+| 不存在 | 软链到 `AGENTS.md` |
+| 内容与 `AGENTS.md` 相同 | 备份后软链 |
+| 内容不同 | 备份后在开头加 `@` 导入，原内容不动 |
+| 已是软链或已有导入 | 不处理 |
+
+可重复执行。运行后在 Claude Code 里用 `/memory` 查看加载结果。
+
+- 导入后两份文件同时加载，互相矛盾的规则需要手动处理
+- 正本放在主目录（`~/AGENTS.md`）时，在没有 `CLAUDE.md` 的仓库里会加载两次
+- 桌面端的 Cowork 会话不加载工作目录外的导入，也不加载软链的 `~/.claude/CLAUDE.md`
+
 ## check-punct
 
 检查中英文标点混用、注释块尾句末标点，以及工作流里的中文 `name:`。目录树、数学表达、单位、箭头和状态标记可使用规范符号。只报不改。
