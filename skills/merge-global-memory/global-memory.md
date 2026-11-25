@@ -39,6 +39,7 @@
 
 ## Git
 
+- Git 用户信息以全局 gitconfig（`git config --global user.name`、`user.email`）为准，提交作者与 committer 均用此身份，不在仓库内另设
 - 默认分支 `master`；提交信息格式、禁止 AI 署名等细则见 `git-commit` skill
 
 ## 标点符号规范
